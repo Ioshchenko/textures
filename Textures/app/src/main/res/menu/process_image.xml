@@ -1,0 +1,26 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/apk/res-auto"
+    xmlns:app="http://schemas.android.com/tools">
+
+    <item
+        android:id="@+id/action_import"
+        android:orderInCategory="100"
+        app:showAsAction="never"
+        android:title="@string/action_import" />
+
+    <item
+        android:id="@+id/action_export"
+        android:orderInCategory="100"
+        app:showAsAction="never"
+        android:title="@string/action_export">
+        <menu>
+            <item
+                android:id="@+id/action_export_pdf"
+                android:title="@string/action_export_pdf" />
+            <item
+                android:id="@+id/action_export_word"
+                android:title="@string/action_export_word" />
+        </menu>
+    </item>
+
+</menu>
