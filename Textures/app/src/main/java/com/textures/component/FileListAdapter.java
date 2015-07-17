@@ -48,6 +48,21 @@ public class FileListAdapter extends ArrayAdapter<Object> {
 
     }
 
+    @Override
+    public int getCount() {
+        return files.size();
+    }
+
+    @Override
+    public Object getItem(int position) {
+        return files.get(position);
+    }
+
+    @Override
+    public long getItemId(int position) {
+        return position;
+    }
+
     public List<String> getFiles() {
         return files;
     }
