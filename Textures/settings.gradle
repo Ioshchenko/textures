@@ -1,1 +1,1 @@
-include ':app', ':tesseract'
+include ':app', ':tesseract', ':opencv'

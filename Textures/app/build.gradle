@@ -24,4 +24,5 @@ dependencies {
     compile 'com.android.support:appcompat-v7:22.2.0'
     compile project(':tesseract')
     compile files('libs/itextpdf-5.5.6.jar')
+    compile project(':opencv')
 }
