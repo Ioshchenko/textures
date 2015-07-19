@@ -28,6 +28,10 @@
         <activity
             android:name="com.textures.activity.UserActivity"
             android:label="@string/activity_user"/>
+
+        <activity
+            android:name="com.textures.activity.ImageDetectionActivity"
+            android:label="@string/activity_image_detection"/>
     </application>
 
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />

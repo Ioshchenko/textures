@@ -8,7 +8,8 @@
     <string name="activity_camera">Camera</string>
     <string name="activity_documents">Documents</string>
     <string name="activity_user">User Detail</string>
-    <string name="action_simage_processin">Image processing</string>
+    <string name="activity_image_detection">Image detection</string>
+    <string name="action_image_processin">Image processing</string>
     <string name="open_image">Open</string>
     <string name="start_processing">Start</string>
     <string name="lang_en">English</string>
