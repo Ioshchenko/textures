@@ -14,6 +14,8 @@ import org.opencv.core.Mat;
 import org.opencv.core.MatOfPoint;
 import org.opencv.core.MatOfPoint2f;
 import org.opencv.core.Point;
+import org.opencv.core.Rect;
+import org.opencv.core.RotatedRect;
 import org.opencv.core.Scalar;
 import org.opencv.core.Size;
 import org.opencv.imgcodecs.Imgcodecs;
@@ -83,8 +85,71 @@ public class OpenCVService {
 
         Imgcodecs.imwrite(mockImageResult, result);
 
+
         return mockImageResult;
 
+    }
+
+
+    private List<Point> findPoints(Mat image) {
+        Mat imgSource = prepareImage(image);
+
+        return detectRectangle(imgSource);
+    }
+
+
+    private List<Point> detectRectangle(Mat imgSource) {
+        List<MatOfPoint> contours = new ArrayList<MatOfPoint>();
+        Imgproc.findContours(imgSource, contours, new Mat(), Imgproc.RETR_LIST, Imgproc.CHAIN_APPROX_SIMPLE);
+        MatOfPoint temp_contour = contours.get(0);
+        MatOfPoint2f approxCurve = new MatOfPoint2f();
+        int maxAreaIdx = -1;
+        double maxArea = -1;
+
+        List<MatOfPoint> largest_contours = new ArrayList<MatOfPoint>();
+        for (int idx = 0; idx < contours.size(); idx++) {
+            temp_contour = contours.get(idx);
+            double contourarea = Imgproc.contourArea(temp_contour);
+            if (contourarea > maxArea) {
+                MatOfPoint2f new_mat = new MatOfPoint2f(temp_contour.toArray());
+                int contourSize = (int) temp_contour.total();
+                Imgproc.approxPolyDP(new_mat, approxCurve, contourSize * 0.05, true);
+                if (approxCurve.total() == 4) {
+                    maxArea = contourarea;
+                    largest_contours.add(temp_contour);
+                    maxAreaIdx = idx;
+                }
+            }
+        }
+
+        String mockImageResult = Constants.IMAGE_FOLDER + File.separator + "test1.jpg";
+        Mat imread = Imgcodecs.imread(mockImageResult);
+        Imgproc.drawContours(imread, contours, maxAreaIdx, new Scalar(0, 255, 0), 10);
+        Imgcodecs.imwrite(Constants.IMAGE_FOLDER + File.separator + "contour.jpg", imread);
+
+        double[] temp_double;
+        temp_double = approxCurve.get(0, 0);
+        Point p1 = new Point(temp_double[0], temp_double[1]);
+        temp_double = approxCurve.get(1, 0);
+        Point p2 = new Point(temp_double[0], temp_double[1]);
+        temp_double = approxCurve.get(2, 0);
+        Point p3 = new Point(temp_double[0], temp_double[1]);
+        temp_double = approxCurve.get(3, 0);
+        Point p4 = new Point(temp_double[0], temp_double[1]);
+
+        return Arrays.asList(new Point[]{p1, p2, p3, p4});
+    }
+
+    private Mat prepareImage(Mat image) {
+        Mat imgSource = image;
+
+        Imgproc.cvtColor(imgSource, imgSource, Imgproc.COLOR_BGR2GRAY);
+        Imgproc.adaptiveThreshold(imgSource, imgSource, 255, Imgproc.ADAPTIVE_THRESH_MEAN_C, Imgproc.THRESH_BINARY, 13, 5);
+
+        Imgproc.Canny(imgSource, imgSource, 10, 20, 3, true);
+
+        Imgproc.GaussianBlur(imgSource, imgSource, new Size(5, 5), 5);
+        return imgSource;
     }
 
     private Mat warp(Mat imageSource, Mat startM) {
@@ -123,49 +188,6 @@ public class OpenCVService {
 
         return outputMat;
     }
-
-    private List<Point> findPoints(Mat image) {
-
-        Mat imgSource = image;
-
-        Imgproc.cvtColor(imgSource, imgSource, Imgproc.COLOR_BGR2GRAY);
-        Imgproc.Canny(imgSource, imgSource, 50, 50);
-        Imgproc.GaussianBlur(imgSource, imgSource, new Size(5, 5), 5);
-        List<MatOfPoint> contours = new ArrayList<MatOfPoint>();
-        Imgproc.findContours(imgSource, contours, new Mat(), Imgproc.RETR_LIST, Imgproc.CHAIN_APPROX_SIMPLE);
-
-        double maxArea = -1;
-
-        MatOfPoint temp_contour = contours.get(0);
-        MatOfPoint2f approxCurve = new MatOfPoint2f();
-        List<MatOfPoint> largest_contours = new ArrayList<MatOfPoint>();
-        for (int idx = 0; idx < contours.size(); idx++) {
-            temp_contour = contours.get(idx);
-            double contourarea = Imgproc.contourArea(temp_contour);
-            if (contourarea > maxArea) {
-                MatOfPoint2f new_mat = new MatOfPoint2f(temp_contour.toArray());
-                int contourSize = (int) temp_contour.total();
-                Imgproc.approxPolyDP(new_mat, approxCurve, contourSize * 0.05, true);
-                if (approxCurve.total() == 4) {
-                    maxArea = contourarea;
-                    largest_contours.add(temp_contour);
-                }
-            }
-        }
-
-        double[] temp_double;
-        temp_double = approxCurve.get(0, 0);
-        Point p1 = new Point(temp_double[0], temp_double[1]);
-        temp_double = approxCurve.get(1, 0);
-        Point p2 = new Point(temp_double[0], temp_double[1]);
-        temp_double = approxCurve.get(2, 0);
-        Point p3 = new Point(temp_double[0], temp_double[1]);
-        temp_double = approxCurve.get(3, 0);
-        Point p4 = new Point(temp_double[0], temp_double[1]);
-
-        return Arrays.asList(new Point[]{p1, p2, p3, p4});
-    }
-
 
 
 }

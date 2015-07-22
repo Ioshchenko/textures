@@ -1,8 +1,43 @@
 <resources>
 
-    <!-- Base application theme. -->
+    <!--Theme color-->
+    <color name="grey">#615758</color>
+    <color name="red">#E65C49</color>
+    <color name="light_blue">#95E5D5</color>
+    <color name="black_blue">#14384A</color>
+    <color name="blue">#57869E</color>
+    <color name="white">#FFF</color>
+
+
+    <color name="actionbar_background">#e0e0e0</color>
+    <color name="actionbar_blu">#2294EE</color>
+
+
     <style name="AppTheme" parent="android:Theme.Holo.Light">
-        <!-- Customize your theme here. -->
+        <item name="android:actionBarStyle">@style/ActionBar</item>
+    </style>
+
+    <style name="ActionBar" parent="@android:style/Widget.Holo.Light.ActionBar.Solid.Inverse">
+        <item name="android:background">@color/actionbar_background</item>
+    </style>
+
+    <style name="AppTheme.Camera" parent="android:Theme.Holo.Light">
+        <item name="android:windowActionBar">false</item>
+        <item name="android:windowNoTitle">true</item>
+    </style>
+
+    <style name="camera_liner_layout">
+        <item name="android:background">@color/grey</item>
+    </style>
+
+    <style name="camera_liner_layout.camera_button">
+        <item name="android:padding">10dp</item>
+        <item name="android:layout_height">70dp</item>
+        <item name="android:layout_width">70dp</item>
+        <item name="android:scaleType">fitXY</item>
+        <item name="android:src">@drawable/camera_shot</item>
+        <item name="android:background">@drawable/camera_image_button</item>
+        <item name="android:layout_marginBottom">2dp</item>
     </style>
 
 </resources>

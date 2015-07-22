@@ -47,7 +47,6 @@ public class MainActivity extends BaseActivity {
         });
 
         Intent intent = new Intent(this, ImageDetectionActivity.class);
-        startActivity(intent);
     }
 
     private void viewPdf(String fileName) {

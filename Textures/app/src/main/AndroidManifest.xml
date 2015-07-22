@@ -20,7 +20,9 @@
 
         <activity
             android:name="com.textures.activity.CameraActivity"
-            android:label="@string/activity_camera"/>
+            android:label="@string/activity_camera"
+             android:theme="@style/AppTheme.Camera"
+            />
 
         <activity
             android:name="com.textures.activity.ProcessImageActivity"/>
