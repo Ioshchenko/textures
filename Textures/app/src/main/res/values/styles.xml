@@ -26,17 +26,31 @@
         <item name="android:windowNoTitle">true</item>
     </style>
 
-    <style name="camera_liner_layout">
+    <style name="AppTheme.ImageDetect" parent="android:Theme.Holo.Light">
+        <item name="android:windowActionBar">false</item>
+        <item name="android:windowNoTitle">true</item>
+    </style>
+
+    <style name="liner_layout">
         <item name="android:background">@color/grey</item>
     </style>
 
-    <style name="camera_liner_layout.camera_button">
+    <style name="liner_layout.camera_button">
         <item name="android:padding">10dp</item>
         <item name="android:layout_height">70dp</item>
         <item name="android:layout_width">70dp</item>
         <item name="android:scaleType">fitXY</item>
         <item name="android:src">@drawable/camera_shot</item>
         <item name="android:background">@drawable/camera_image_button</item>
+        <item name="android:layout_marginBottom">2dp</item>
+    </style>
+
+    <style name="liner_layout.white_image_button">
+        <item name="android:padding">10dp</item>
+        <item name="android:layout_height">70dp</item>
+        <item name="android:layout_width">70dp</item>
+        <item name="android:scaleType">fitXY</item>
+        <item name="android:background">@drawable/white_image_button</item>
         <item name="android:layout_marginBottom">2dp</item>
     </style>
 

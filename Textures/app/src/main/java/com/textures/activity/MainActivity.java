@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ImageView;
@@ -79,6 +80,18 @@ public class MainActivity extends BaseActivity {
     public boolean onQueryTextChange(String newText) {
         onQueryTextSubmit(newText);
         return false;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.action_settings:
+                Intent intent = new Intent(this, ImageDetectionActivity.class);
+                intent.putExtra(Constants.Parameters.IMAGE_NAME,Constants.IMAGE_FOLDER+File.separator+"test.jpg");
+                startActivity(intent);
+                break;
+        }
+        return true;
     }
 
 }

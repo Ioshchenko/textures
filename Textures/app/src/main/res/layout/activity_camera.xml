@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    style="@style/camera_liner_layout"
+    style="@style/liner_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
@@ -27,6 +27,6 @@
 
         <ImageButton
             android:id="@+id/button_capture"
-            style="@style/camera_liner_layout.camera_button" />
+            style="@style/liner_layout.camera_button" />
     </LinearLayout>
 </LinearLayout>

@@ -2,7 +2,6 @@ package com.textures.activity;
 
 import android.content.Intent;
 import android.hardware.Camera;
-import android.net.Uri;
 import android.os.Bundle;
 import android.os.FileObserver;
 import android.util.Log;
@@ -24,19 +23,13 @@ public class CameraActivity extends BaseActivity {
     private Camera camera;
     private CameraPreview cameraPreview;
     private CameraFunctions cameraFunctions;
-    private Uri fileUri;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_camera);
 
-        camera = getCameraInstance();
-        cameraPreview = new CameraPreview(this, camera);
-        cameraFunctions = new CameraFunctions();
-
-        FrameLayout preview = (FrameLayout) findViewById(R.id.camera_preview);
-        preview.addView(cameraPreview);
+        initCamera();
 
         ImageButton captureButton = (ImageButton) findViewById(R.id.button_capture);
         captureButton.setOnClickListener(new View.OnClickListener() {
@@ -47,36 +40,50 @@ public class CameraActivity extends BaseActivity {
         });
 
 
-
         FileObserver observer = new FileObserver(Constants.IMAGE_FOLDER) {
             @Override
             public void onEvent(int event, String file) {
-                if (event == FileObserver.CREATE) {                   
-                    startImageProcessing(file);
+                if (event == FileObserver.CREATE) {
+                    startImageDetection(file);
                 }
             }
         };
         observer.startWatching();
     }
 
+    private void initCamera() {
+        camera = getCameraInstance();
+        cameraPreview = new CameraPreview(this, camera);
+        cameraFunctions = new CameraFunctions();
 
-    private void startImageProcessing(String imageName) {
-        Intent intent = new Intent(this, ProcessImageActivity.class);
+        FrameLayout preview = (FrameLayout) findViewById(R.id.camera_preview);
+        preview.addView(cameraPreview);
+    }
+
+
+    private void startImageDetection(String imageName) {
+        Intent intent = new Intent(this, ImageDetectionActivity.class);
         intent.putExtra(Constants.Parameters.IMAGE_NAME, imageName);
         startActivity(intent);
     }
 
-
     @Override
     protected void onPause() {
         super.onPause();
-        releaseCamera();
-    }
-
-    private void releaseCamera() {
         if (camera != null) {
             camera.release();
             camera = null;
+        }
+        FrameLayout parentPreview = (FrameLayout) findViewById(R.id.camera_preview);
+        parentPreview.removeView(cameraPreview);
+        cameraPreview = null;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (camera == null) {
+            initCamera();
         }
     }
 
@@ -132,6 +139,5 @@ public class CameraActivity extends BaseActivity {
 
         return result;
     }
-
 
 }
