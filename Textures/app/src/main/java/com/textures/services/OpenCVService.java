@@ -5,6 +5,7 @@ import android.content.Context;
 import android.util.Log;
 
 import com.textures.Constants;
+import com.textures.convertors.CanvasPointPixelConvertor;
 
 import org.opencv.android.BaseLoaderCallback;
 import org.opencv.android.LoaderCallbackInterface;
@@ -14,8 +15,6 @@ import org.opencv.core.Mat;
 import org.opencv.core.MatOfPoint;
 import org.opencv.core.MatOfPoint2f;
 import org.opencv.core.Point;
-import org.opencv.core.Rect;
-import org.opencv.core.RotatedRect;
 import org.opencv.core.Scalar;
 import org.opencv.core.Size;
 import org.opencv.imgcodecs.Imgcodecs;
@@ -162,9 +161,6 @@ public class OpenCVService {
         Point ocvPOut3 = new Point(resultWidth, 0);
 
         if (imageSource.height() > imageSource.width()) {
-            // int temp = resultWidth;
-            // resultWidth = resultHeight;
-            // resultHeight = temp;
 
             ocvPOut3 = new Point(0, 0);
             ocvPOut4 = new Point(0, resultHeight);
@@ -187,6 +183,38 @@ public class OpenCVService {
         Imgproc.warpPerspective(imageSource, outputMat, perspectiveTransform, new Size(resultWidth, resultHeight), Imgproc.INTER_CUBIC);
 
         return outputMat;
+    }
+
+    public void perspectiveTransformation(String imagePath, String imageResult, CanvasPointPixelConvertor canvasPointPixelConvertor) {
+        Mat imageSource = Imgcodecs.imread(imagePath);
+
+        Point ocvPOut4 = new Point(0, 0);
+        Point ocvPOut1 = new Point(0, canvasPointPixelConvertor.getHeight());
+        Point ocvPOut2 = new Point(canvasPointPixelConvertor.getWidth(), canvasPointPixelConvertor.getHeight());
+        Point ocvPOut3 = new Point(canvasPointPixelConvertor.getWidth(), 0);
+
+        if (imageSource.height() > imageSource.width()) {
+            ocvPOut3 = new Point(0, 0);
+            ocvPOut4 = new Point(0, canvasPointPixelConvertor.getHeight());
+            ocvPOut1 = new Point(canvasPointPixelConvertor.getWidth(), canvasPointPixelConvertor.getHeight());
+            ocvPOut2 = new Point(canvasPointPixelConvertor.getWidth(), 0);
+        }
+
+        Mat outputMat = new Mat(canvasPointPixelConvertor.getWidth(), canvasPointPixelConvertor.getHeight(), CvType.CV_8UC4);
+        Mat endM = Converters.vector_Point2f_to_Mat(Arrays.asList(ocvPOut1, ocvPOut2, ocvPOut3, ocvPOut4));
+
+        Point ocvPInput1 = new Point(canvasPointPixelConvertor.getTopRightPoint());
+        Point ocvPInput2 = new Point(canvasPointPixelConvertor.getTopLeftPoint());
+        Point ocvPInput3 = new Point(canvasPointPixelConvertor.getBottomLeftPoint());
+        Point ocvPInput4 = new Point(canvasPointPixelConvertor.getBottomRightPoint());
+        Mat startM = Converters.vector_Point2f_to_Mat(Arrays.asList(ocvPInput1, ocvPInput2, ocvPInput3, ocvPInput4));
+
+        Mat perspectiveTransform = Imgproc.getPerspectiveTransform(startM, endM);
+
+        Imgproc.warpPerspective(imageSource, outputMat, perspectiveTransform,
+                new Size(canvasPointPixelConvertor.getWidth(), canvasPointPixelConvertor.getHeight()), Imgproc.INTER_CUBIC);
+
+        Imgcodecs.imwrite(imageResult, outputMat);
     }
 
 

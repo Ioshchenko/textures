@@ -9,50 +9,26 @@ import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.widget.ImageView;
 
+import com.textures.models.Point;
+
 public class CanvasImageView extends ImageView {
-    public static final int ERROR = 100;
-    public static final int RADIUS = 15;
-    public static final int STROKE_WIDTH = 5;
-    public static int COLOR = Color.rgb(149, 229, 213);
+
+    public static final int POINT_RADIUS = 15;
+
+    private static final int ERROR = 100;
+    private static final int STROKE_WIDTH = 5;
+    private static int COLOR = Color.rgb(149, 229, 213);
+
     private Paint paint;
+    private double scale;
 
     private Point topLeftPoint;
     private Point topRightPoint;
     private Point bottomLeftPoint;
     private Point bottomRightPoint;
 
-
     public CanvasImageView(Context context, AttributeSet attrs) {
         super(context, attrs);
-    }
-
-    private void setupPaint(Canvas canvas) {
-        if (paint == null) {
-            paint = new Paint();
-            paint.setColor(COLOR);
-            paint.setStrokeWidth(STROKE_WIDTH);
-            topLeftPoint = new Point(RADIUS, RADIUS);
-            topRightPoint = new Point(canvas.getWidth() - RADIUS, RADIUS);
-            bottomLeftPoint = new Point(RADIUS, canvas.getHeight() - RADIUS);
-            bottomRightPoint = new Point(getWidth() - RADIUS, getHeight() - RADIUS);
-        }
-    }
-
-    protected void onDraw(Canvas canvas) {
-        super.onDraw(canvas);
-        setupPaint(canvas);
-
-        canvas.drawCircle(topLeftPoint.x, topLeftPoint.y, RADIUS, paint);
-        canvas.drawCircle(topRightPoint.x, topRightPoint.y, RADIUS, paint);
-        canvas.drawCircle(bottomLeftPoint.x, bottomLeftPoint.y, RADIUS, paint);
-        canvas.drawCircle(bottomRightPoint.x, bottomRightPoint.y, RADIUS, paint);
-
-        canvas.drawLine(topLeftPoint.x, topLeftPoint.y, topRightPoint.x, topRightPoint.y, paint);
-        canvas.drawLine(bottomLeftPoint.x, bottomLeftPoint.y, bottomRightPoint.x, bottomRightPoint.y, paint);
-
-        canvas.drawLine(topLeftPoint.x, topLeftPoint.y, bottomLeftPoint.x, bottomLeftPoint.y, paint);
-        canvas.drawLine(topRightPoint.x, topRightPoint.y, bottomRightPoint.x, bottomRightPoint.y, paint);
-
     }
 
     @Override
@@ -62,42 +38,84 @@ public class CanvasImageView extends ImageView {
         return true;
     }
 
+    private void setupPaint(Canvas canvas) {
+        if (paint == null) {
+            paint = new Paint();
+            paint.setColor(COLOR);
+            paint.setStrokeWidth(STROKE_WIDTH);
+            topLeftPoint = new Point(POINT_RADIUS, POINT_RADIUS);
+            topRightPoint = new Point(getWidth() - POINT_RADIUS, POINT_RADIUS);
+            bottomLeftPoint = new Point(POINT_RADIUS, getHeight() - POINT_RADIUS);
+            bottomRightPoint = new Point(getWidth() - POINT_RADIUS, getHeight() - POINT_RADIUS);
+        }
+    }
+
+    protected void onDraw(Canvas canvas) {
+        super.onDraw(canvas);
+        setupPaint(canvas);
+
+        canvas.drawCircle(topLeftPoint.getX(), topLeftPoint.getY(), POINT_RADIUS, paint);
+        canvas.drawCircle(topRightPoint.getX(), topRightPoint.getY(), POINT_RADIUS, paint);
+        canvas.drawCircle(bottomLeftPoint.getX(), bottomLeftPoint.getY(), POINT_RADIUS, paint);
+        canvas.drawCircle(bottomRightPoint.getX(), bottomRightPoint.getY(), POINT_RADIUS, paint);
+
+        canvas.drawLine(topLeftPoint.getX(), topLeftPoint.getY(), topRightPoint.getX(), topRightPoint.getY(), paint);
+        canvas.drawLine(bottomLeftPoint.getX(), bottomLeftPoint.getY(), bottomRightPoint.getX(), bottomRightPoint.getY(), paint);
+
+        canvas.drawLine(topLeftPoint.getX(), topLeftPoint.getY(), bottomLeftPoint.getX(), bottomLeftPoint.getY(), paint);
+        canvas.drawLine(topRightPoint.getX(), topRightPoint.getY(), bottomRightPoint.getX(), bottomRightPoint.getY(), paint);
+
+    }
+
     private void analyzePoints(float x, float y) {
         if (isThisPoint(topLeftPoint, x, y)) {
-            topLeftPoint.x = x;
-            topLeftPoint.y = y;
+            topLeftPoint.setX(x);
+            topLeftPoint.setY(y);
         }
         if (isThisPoint(topRightPoint, x, y)) {
-            topRightPoint.x = x;
-            topRightPoint.y = y;
+            topRightPoint.setX(x);
+            topRightPoint.setY(y);
         }
         if (isThisPoint(bottomLeftPoint, x, y)) {
-            bottomLeftPoint.x = x;
-            bottomLeftPoint.y = y;
+            bottomLeftPoint.setX(x);
+            bottomLeftPoint.setY(y);
         }
         if (isThisPoint(bottomRightPoint, x, y)) {
-            bottomRightPoint.x = x;
-            bottomRightPoint.y = y;
+            bottomRightPoint.setX(x);
+            bottomRightPoint.setY(y);
         }
 
     }
 
     private boolean isThisPoint(Point point, float x, float y) {
-        if ((point.x + ERROR > x && point.x - ERROR < x) && (point.y + ERROR > y && point.y - ERROR < y)) {
+        if ((point.getX() + ERROR > x && point.getX() - ERROR < x) && (point.getY() + ERROR > y && point.getY() - ERROR < y)) {
             return true;
         } else {
             return false;
         }
     }
 
+    public Point getTopLeftPoint() {
+        return topLeftPoint;
+    }
 
-    class Point {
-        float x;
-        float y;
+    public Point getTopRightPoint() {
+        return topRightPoint;
+    }
 
-        public Point(float x, float y) {
-            this.x = x;
-            this.y = y;
-        }
+    public Point getBottomLeftPoint() {
+        return bottomLeftPoint;
+    }
+
+    public Point getBottomRightPoint() {
+        return bottomRightPoint;
+    }
+
+    public double getScale() {
+        return scale;
+    }
+
+    public void setScale(double scale) {
+        this.scale = scale;
     }
 }

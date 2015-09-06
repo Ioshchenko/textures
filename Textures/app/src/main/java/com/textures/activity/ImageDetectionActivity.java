@@ -4,14 +4,16 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
+import android.view.Display;
 import android.view.View;
-import android.widget.ImageView;
+import android.widget.LinearLayout;
 
 import com.textures.Constants;
 import com.textures.R;
+import com.textures.component.CanvasImageView;
+import com.textures.convertors.CanvasPointPixelConvertor;
 import com.textures.services.OpenCVService;
 
 import java.io.File;
@@ -21,23 +23,27 @@ public class ImageDetectionActivity extends BaseActivity {
     private OpenCVService openCVService;
     private String mockImagePath = Constants.IMAGE_FOLDER + File.separator + "test1.jpg";
     private Bitmap bitmap;
-    private ImageView imageProcessing;
-    private int color = Color.rgb(149, 229, 213);
+    private CanvasImageView canvasImageView;
+    private String imagePath;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_image_detection);
-        imageProcessing = (ImageView) findViewById(R.id.canvasImage);
+        canvasImageView = (CanvasImageView) findViewById(R.id.canvasImage);
 
         Intent intent = getIntent();
         String imageName = intent
                 .getStringExtra(Constants.Parameters.IMAGE_NAME);
 
         if (imageName != null) {
-            convertImageToCanvas(Constants.IMAGE_FOLDER + File.separator + imageName);
+            imagePath = imageName;
+            convertImageToCanvas(imageName);
+        } else {
+            imagePath = mockImagePath;
+            convertImageToCanvas(mockImagePath);
         }
-
     }
 
     @Override
@@ -47,6 +53,15 @@ public class ImageDetectionActivity extends BaseActivity {
         openCVService.initial();
     }
 
+    public void back(View view) {
+        this.finish();
+    }
+
+    public void crop(View view) {
+        CanvasPointPixelConvertor helper = new CanvasPointPixelConvertor(canvasImageView);
+        String resultImage = Constants.IMAGE_FOLDER + File.separator + "temp.jpg";
+        openCVService.perspectiveTransformation(imagePath, resultImage, helper);
+    }
 
     private void convertImageToCanvas(String imagePath) {
         if (bitmap == null) {
@@ -56,12 +71,17 @@ public class ImageDetectionActivity extends BaseActivity {
         Canvas tempCanvas = new Canvas(tempBitmap);
         tempCanvas.drawBitmap(bitmap, 0, 0, null);
 
-        imageProcessing.setImageDrawable(new BitmapDrawable(getResources(), tempBitmap));
+        canvasImageView.setImageDrawable(new BitmapDrawable(getResources(), tempBitmap));
+        scaleImageView(tempBitmap);
     }
 
-    public void back(View view) {
-        this.finish();
+    private void scaleImageView(Bitmap tempBitmap) {
+        Display display = getWindowManager().getDefaultDisplay();
+        int width = display.getWidth();
+        double scale = (double) tempBitmap.getWidth() / (double) width;
+        LinearLayout.LayoutParams parms = new LinearLayout.LayoutParams(width, (int) (tempBitmap.getHeight() / scale));
+        canvasImageView.setLayoutParams(parms);
+        canvasImageView.setScale(scale);
     }
-
 
 }
